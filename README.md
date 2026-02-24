@@ -1,4 +1,4 @@
-# Official repository for the paper:
+## Official repository for the paper:
 
 **CoRe-DA: Contrastive Regression for Unsupervised Domain Adaptation in Surgical Skill Assessment**
 
