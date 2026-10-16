@@ -4,15 +4,13 @@ This is the **official GitHub repository** for **"CoRe-DA: Contrastive Regressio
 
 ![Figure](CoRe_DA.png)
 
-**Paper:** [Springer / DOI](https://link.springer.com/chapter/10.1007/978-3-032-38233-7_8#citeas)
+**Paper:** [link](https://link.springer.com/chapter/10.1007/978-3-032-38233-7_8)
 
 ## Questions and Contact
 For any questions about the code or the paper, please email
-[dimanasta96@gmail.com]
+[dimanasta96@gmail.com].
 
 ## Setup
-
-The experiments were developed using:
 
 - **Python:** 3.10
 - **PyTorch:** 2.7.1+cu118
@@ -20,7 +18,8 @@ The experiments were developed using:
 ### Data
 
 1. Please request access to download the prepared datasets from **[this link](https://drive.google.com/drive/folders/1FTtVt2JZbyWM9LCo8yaUAZrKc4hEQPjJ?usp=sharing)**.
-2. Extract the downloaded data into a local dataset directory `datasets/`.
+2. Extract the downloaded data into the repo, i.e., `CoRe-DA/datasets/...`.
+3. For RAH-skill and and RARP-skill datasets follow **[this link](https://github.com/HRL-Mike/SurgFusion-Net)**
 
 
 ## Training
@@ -51,7 +50,7 @@ The training code uses Weights & Biases for experiment tracking.
 
 ## Pretrained model weights
 
-Model checkpoints (`.pth`) for the following experiments are provided below. **Add the download links before publishing.**
+Model checkpoints (`.pth`) for the following experiments are provided below.
 
 | Source domain | Target domain | Model checkpoint |
 | --- | --- | --- |
