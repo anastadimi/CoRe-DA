@@ -19,7 +19,7 @@ For any questions about the code or the paper, please email
 
 1. Please request access to download the prepared datasets from **[this link](https://drive.google.com/drive/folders/1FTtVt2JZbyWM9LCo8yaUAZrKc4hEQPjJ?usp=sharing)**.
 2. Extract the downloaded data into the repo, i.e., `CoRe-DA/datasets/...`.
-3. For RAH-skill and and RARP-skill datasets follow **[this link](https://github.com/HRL-Mike/SurgFusion-Net)**
+3. For RAH-skill and and RARP-skill datasets follow **[this link](https://github.com/HRL-Mike/SurgFusion-Net)**.
 
 
 ## Training
@@ -62,8 +62,16 @@ Model checkpoints (`.pth`) for the following experiments are provided below.
 If you use this code or build on our work, please cite:
 
 ```bibtex
-@incollection{anastasiou2027coreda,
-  author    = {Anastasiou, Dimitrios and others},
+@inproceedings{anastasiou2027coreda,
+  author    = {Dimitrios Anastasiou and
+               Razvan Caramalau and
+               Jialang Xu and
+               Runlong He and
+               Freweini M. Tesfai and
+               Matthew W. E. Boal and
+               Nader Francis and
+               Danail Stoyanov and
+               Evangelos B. Mazomenos},
   title     = {CoRe-DA: Contrastive Regression for Unsupervised Domain Adaptation in Surgical Skill Assessment},
   booktitle = {Medical Image Computing and Computer Assisted Intervention -- MICCAI 2026},
   series    = {Lecture Notes in Computer Science},
