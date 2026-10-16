@@ -6,17 +6,12 @@ def get_args():
     parser.add_argument("--debug", action="store_true", help="Enable debug mode")
     parser.add_argument("--seed", type=int, default=2, help="Random seed")
 
+    # ---------- Experiment namings and setup ----------
     parser.add_argument(
-        "--base_path_wts",
+        "--path_to_datasets",
         type=str,
-        default="/media",
-        help="Path to save weights.",
-    )
-    parser.add_argument(
-        "--base_dir",
-        type=str,
-        default="/home/anonymous_user",
-        help="Base dir path (where the data is stored)",
+        default="path/to/datasets/dir",
+        help="Base dir path",
     )
 
     parser.add_argument("--project", type=str, default="CoRe-DA", help="Project name")
@@ -28,10 +23,14 @@ def get_args():
         "--target_dataset", type=str, default="jigsaws", help="Target dataset name"
     )
     parser.add_argument("--anno", type=str, default="osats", help="Annotation type")
-
+    parser.add_argument(
+        "--label_column", type=str, default="grs", help="Label column name"
+    )
     parser.add_argument(
         "--workers", type=int, default=8, help="Number of workers for dataloader"
     )
+
+    # ---------- Data pipeline ----------
     parser.add_argument(
         "--norm_stats",
         type=dict,
@@ -52,9 +51,11 @@ def get_args():
         "--num_segments", type=int, default=12, help="Number of segments"
     )
     parser.add_argument("--snippet_size", type=int, default=12, help="Snippet size")
-    
+
     parser.add_argument(
-        "--ordered_sampling", action="store_true", help="Whether to sample ordered snippets during training"
+        "--ordered_sampling",
+        action="store_true",
+        help="Whether to sample ordered snippets during training",
     )
     parser.add_argument(
         "--no_ordered_sampling",
@@ -64,7 +65,6 @@ def get_args():
     )
     parser.set_defaults(ordered_sampling=True)
 
-    
     # ---------- Testing ----------
     parser.add_argument(
         "--n_exemplars",
@@ -76,11 +76,12 @@ def get_args():
         "--sampling_method",
         type=str,
         default="uniform",
-        choices=["uniform", "distribution", "random"],
+        choices=["uniform", "distribution", "random", "closest_label"],
         help="Sampling method for exemplars",
     )
 
     # ---------- Model ----------
+    # Feature Extractor
     parser.add_argument(
         "--feature_dim", type=int, default=256, help="Feature dimension size"
     )
@@ -103,7 +104,7 @@ def get_args():
     parser.add_argument(
         "--freeze_until",
         type=str,
-        default=None,
+        default="Mixed_4c",
         help="Must be one of InceptionI3d.VALID_ENDPOINTS",
     )
     parser.add_argument(
@@ -121,10 +122,10 @@ def get_args():
     parser.add_argument(
         "--weight_path",
         type=str,
-        default="kinetics.pt",
+        default="rgb_imagenet.pt",
         help="Path to Kinetics weights for I3D.",
     )
-    
+
     # CoRe-DA
     parser.add_argument(
         "--abs_regressor_hidden_dim",
@@ -139,13 +140,17 @@ def get_args():
         help="Hidden dim of relative regressor MLP",
     )
 
-
     # ---------- Optimizer ----------
     parser.add_argument("--batch_size", type=int, default=16, help="Batch size")
     parser.add_argument(
-        "--epochs", type=int, default=100, help="Number of training epochs"
+        "--epochs", type=int, default=150, help="Number of training epochs"
     )
-    parser.add_argument("--lr_i3d", type=float, default=1e-05, help="Learning rate for feature extractor")
+    parser.add_argument(
+        "--lr_i3d",
+        type=float,
+        default=1e-05,
+        help="Learning rate for feature extractor",
+    )
     parser.add_argument("--lr", type=float, default=5e-05, help="Learning rate")
     parser.add_argument(
         "--scheduler_epoch", type=int, default=None, help="Linear scheduler decay epoch"
@@ -155,16 +160,76 @@ def get_args():
         action="store_true",
         help="Whether to stop gradient flow from y_T",
     )
-    parser.add_argument("--S_only_warmup", type=int, default=0, help="Source only training epochs")
 
-    
     # ---------- Losses ----------
-    parser.add_argument("--coef_alpha", type=float, default=1.0, help="Coefficient for supervised losses")    
-    parser.add_argument("--coef_beta", type=float, default=1.0, help="Coefficient for consistency loss (source)")    
-    parser.add_argument("--coef_gamma", type=float, default=1.0, help="Coefficient for consistency loss (target)")    
-    
-    # --------- Background Mixing --------- 
-    parser.add_argument("--mix_test",action="store_true",help="Whether to mix T at testing")
-    
+    parser.add_argument(
+        "--coef_sup_loss_rel",
+        type=float,
+        default=1.0,
+        help="Coefficient for relative supervised loss (source)",
+    )
+    parser.add_argument(
+        "--coef_sup_loss_abs",
+        type=float,
+        default=1.0,
+        help="Coefficient for absolute supervised loss (source exemplar)",
+    )
+    parser.add_argument(
+        "--coef_cons_loss_S",
+        type=float,
+        default=1.0,
+        help="Coefficient for consistency loss (source)",
+    )
+    parser.add_argument(
+        "--coef_cons_loss_T",
+        type=float,
+        default=1.0,
+        help="Coefficient for consistency loss (target)",
+    )
+    parser.add_argument(
+        "--use_cons_S", action="store_true", help="Whether to use consistency loss in S"
+    )
+
+    # --------- Background Mixing ---------
+    parser.add_argument(
+        "--use_video_BG_in_S",
+        action="store_true",
+        help="Whether to mix video-based BG to S branch",
+    )
+    parser.add_argument(
+        "--use_clip_BG_in_S",
+        action="store_true",
+        help="Whether to mix clip-based BG to S branch",
+    )
+    parser.add_argument(
+        "--use_video_BG_in_ex",
+        action="store_true",
+        help="Whether to mix video-based BG to ex branch",
+    )
+    parser.add_argument(
+        "--use_clip_BG_in_ex",
+        action="store_true",
+        help="Whether to mix clip-based BG to ex branch",
+    )
+    parser.add_argument(
+        "--use_video_BG_in_T",
+        action="store_true",
+        help="Whether to mix video-based BG to T branch",
+    )
+    parser.add_argument(
+        "--use_clip_BG_in_T",
+        action="store_true",
+        help="Whether to mix clip-based BG to T branch",
+    )
+    parser.add_argument(
+        "--gamma_alpha",
+        type=float,
+        default=0.5,
+        help="Gamma value for uniform sampling used for BG mixing",
+    )
+    parser.add_argument(
+        "--mix_test", action="store_true", help="Whether to mix T at testing"
+    )
+
     args = parser.parse_args()
     return args
